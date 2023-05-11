@@ -1,0 +1,265 @@
+{% set url = app.request.attributes.get('_route') %}
+{% set query = app.request.query %}
+{% set filter = query.all.filter ?? null %}
+{% set sorter = query.all.sorter ?? null %}
+{% set currentPage = query.get('page', 1) %}
+{% set itemsPerPage = query.get('itemsPerPage', 10) %}
+{% set lastPage = max((props.total / props.itemsPerPage)|round(0, 'ceil'), 1) %}
+{% set paginateStart = max(currentPage - 4, 1) %}
+{% set paginateEnd = min(currentPage + 4, lastPage) %}
+
+{# <form action="{{ path(url, query.all, {'channelName': app.request.attributes.get('channelName')}) }}" method="get">#}
+<form action="{{ path(url, query.all|merge({'channelName': app.request.attributes.get('channelName')})) }}" method="get">
+    {% if props.actions.single is defined %}
+        {% for action in props.actions.single %}
+            {% if action.permission is defined %}
+                {% if is_granted(action.permission) %}
+                    {% include action.template with {
+                        url: action.url,
+                        name: action.name,
+                    }|merge(action.variables|default({})) only %}
+                {% endif %}
+            {% else %}
+                {% include action.template with {
+                    url: action.url,
+                    name: action.name,
+                }|merge(action.variables|default({})) only %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if props.columns|filter(column => column.filter is defined)|length %}
+        <button type="button" class="btn btn-outline-info btn-icon btn-slim mb-4" title="Show Filter" id="show-filter">
+            <i class="bi bi-funnel"></i> Show Filters
+        </button>
+    {% endif %}
+    <button type="button" class="btn btn-outline-info btn-icon d-none mb-4" title="Hide Filter" id="hide-filter">
+        <i class="bi bi-funnel-fill"></i>
+    </button>
+
+    {% if props.additionalSorters is defined or props.additionalFilters is defined %}
+        <div class="portlet mb-4 grid-filter d-none">
+            <div class="portlet__header">Filters</div>
+            <div class="portlet__body">
+                {% if props.additionalSorters is defined %}
+                    {% for innerSorter in props.additionalSorters %}
+                        {% if innerSorter.key in sorter|keys %}
+                            <a href="{{ path(url, query.all|merge({sorter: {(innerSorter.key): attribute(sorter, innerSorter.key) == 'asc' ? 'desc' : 'asc'}, 'channelName': app.request.attributes.get('channelName')})) }}" class="btn-success btn-slim show-loader">{{ attribute(sorter, innerSorter.key) == 'asc' ? '▲' : '▼' }} {{ innerSorter.name }}</a>
+                        {% else %}
+                            <a href="{{ path(url, query.all|merge({sorter: {(innerSorter.key): 'asc'}, 'channelName': app.request.attributes.get('channelName')})) }}" class="btn-primary btn-slim show-loader">{{ innerSorter.name }}</a>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if props.additionalFilters is defined %}
+                    <div class="row">
+                        {% for columnFilter in props.additionalFilters %}
+                            <div class="d-none grid-filter mt-4 col-md-4 col-12">
+                                <label class="w-100">
+                                    {{ columnFilter.name }}
+                                    {% include columnFilter.template with {
+                                        key: 'filter[' ~ columnFilter.key ~ '][' ~ columnFilter.operator ~ '][]',
+                                        values: attribute(attribute(filter, columnFilter.key), columnFilter.operator)|default(['']),
+                                        options: columnFilter.options|default({})
+                                    } only %}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if props.actions.multipleCheckBox is defined %}
+        <div class="portlet d-none mb-4" id="multiple-actions">
+            <div class="portlet__header">Multiple Actions</div>
+            <div class="portlet__body">
+                {% for action in props.actions.multipleCheckBox %}
+                    {% include action.template with {
+                        url: action.url,
+                        name: action.name
+                    } only %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="table-responsive">
+        <table class="table table-striped-column lh-lg align-middle">
+            <thead>
+                <tr class="text-sm-fs-6 text-nowrap mh-50">
+                    {% if props.actions.multipleCheckBox is defined %}
+                        <th class="text-center">
+                            <div class="form-check form-check--primary form-check--sm checkbox-without-label">
+                                <input class="form-check-input checkbox-without-label" type="checkbox" name="select">
+                            </div>
+                        </th>
+                    {% endif %}
+
+                    {% for column in props.columns %}
+                        <th class="col-{{- column.columnWidth -}}">
+                            {% if column.filter is defined %}
+                                {% set columnFilter = column.filter %}
+                                <div class="d-none grid-filter mb-2">
+                                    {% include columnFilter.template with {
+                                        key: 'filter[' ~ column.key ~ '][' ~ columnFilter.operator ~ '][]',
+                                        values: attribute(attribute(filter, column.key), columnFilter.operator)|default(['']),
+                                        options: columnFilter.options|default({})
+                                    } only %}
+                                </div>
+                            {% endif %}
+
+                            {% if column.hasSorter|default(true) is same as true %}
+                                {% if column.key in sorter|keys %}
+                                    <a href="{{ path(url, query.all|merge({sorter: {(column.key): attribute(sorter, column.key) == 'asc' ? 'desc' : 'asc'}, 'channelName': app.request.attributes.get('channelName')})) }}" class="btn-success btn-slim-label show-loader">
+                                        <label class="btn-label">
+                                            {{ attribute(sorter, column.key) == 'asc' ? '▲' : '▼' }} {{ column.name }}
+                                        </label>
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path(url, query.all|merge({sorter: {(column.key): 'asc'}, channelName: app.request.attributes.get('channelName')})) }}" class="btn-primary btn-slim-label show-loader">
+                                        <label class="btn-label">
+                                            {{ column.name }}
+                                        </label>
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                {{ column.name }}
+                            {% endif %}
+                        </th>
+                    {% endfor %}
+
+                    {% if props.actions.multiple is defined %}
+                        <th class="col-2">
+                            <button type="submit" class="btn btn-primary btn-icon d-none" title="Apply Filter" id="apply-filter">
+                                <i class="bi bi-arrow-return-left"></i>
+                            </button>
+                            <a href="{{ path(url, {'channelName': app.request.attributes.get('channelName')}) }}" title="Remove Filter" class="btn btn-danger btn-icon d-none show-loader" id="trash-filter">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% set modalTemplates = [] %}
+                {% for item in props.items %}
+                    <tr class="text-sm-fs-6 text-nowrap mh-50">
+                        {% if props.actions.multipleCheckBox is defined %}
+                            <td class="text-center">
+                                <div class="form-check form-check--primary form-check--sm checkbox-without-label">
+                                    <input class="form-check-input checkbox-without-label" type="checkbox" name="selected" data-key="{{ item.id }}"/>
+                                </div>
+                            </td>
+                        {% endif %}
+
+                        {% for column in props.columns %}
+                            {% if column.customTemplate is defined %}
+                                <td {% if column.class is defined %}class="{{ column.class }}"{% endif %}>
+                                    {% include column.customTemplate with {
+                                        item: item,
+                                        eshopConfig: eshopConfig
+                                    } only %}
+                                </td>
+                            {% else %}
+                                {% set innerItem = item %}
+                                {% set columnPath = column.path %}
+
+                                {% for _ in 1..columnPath|split('.')|length %}
+                                    {% set columnParts = columnPath|split('.') %}
+
+                                    {% if columnParts|length > 1 %}
+                                        {% set innerItem = attribute(innerItem, columnParts[0]) %}
+                                        {% set columnPath = columnPath|replace({(columnParts[0] ~ '.'): ''}) %}
+                                    {% else %}
+                                        {% if column.template is defined %}
+                                            {% set modal = 'modal-' ~ random(100000, 999999) %}
+
+                                            <td {% if column.class is defined %}class="{{ column.class }}"{% endif %}>
+                                                {% include column.template with {
+                                                    content: attribute(innerItem, columnPath),
+                                                    modal: modal,
+                                                    eshopConfig: eshopConfig
+                                                } only %}
+                                            </td>
+                                            {% if column.modalTemplate is defined %}
+                                                {% set modalTemplate %}
+                                                    {% include column.modalTemplate with {
+                                                        content: attribute(innerItem, columnPath),
+                                                        modal: modal,
+                                                    } only %}
+                                                {% endset %}
+                                                {% set modalTemplates = modalTemplates|merge([modalTemplate]) %}
+                                            {% endif %}
+                                        {% else %}
+                                            <td {% if column.class is defined %}class="{{ column.class }}"{% endif %}>
+                                                {{ attribute(innerItem, columnPath) }}
+                                            </td>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if props.actions.multiple is defined %}
+                            <td>
+                                {% for action in props.actions.multiple %}
+                                    {% include action.template with {
+                                        url: action.url,
+                                        name: action.name,
+                                        item: item
+                                    } only %}
+                                {% endfor %}
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% if props.hasPaginator|default(true) is same as true %}
+            <tfoot>
+                <tr>
+                    <td colspan="{{ props.columns|length + (props.actions.multipleCheckBox is defined ? 1 : 0) + (props.actions.multiple is defined ? 0 : -1) }}"
+                        class="text-center">
+                        <nav>
+                            <ul class="pagination justify-content-center center-table-pagination">
+                                <li class="page-item {% if currentPage == 1 %} active {% endif %}">
+                                    <a class="page-link {% if currentPage != 1 %}show-loader{% endif %}" href="{{ path(url, query.all|merge({page: 1, channelName: app.request.attributes.get('channelName')})) }}">First page</a>
+                                </li>
+                                {% for page in paginateStart..paginateEnd %}
+                                    <li class="page-item {% if currentPage == page %} active {% endif %}">
+                                        <a class="page-link {% if currentPage != page %}show-loader{% endif %}" href="{{ path(url, query.all|merge({page: page, channelName: app.request.attributes.get('channelName')})) }}">{{ page }}</a>
+                                    </li>
+                                {% endfor %}
+                                <li class="page-item {% if currentPage == lastPage %} active {% endif %}">
+                                    <a class="page-link {% if currentPage != lastPage %}show-loader{% endif %}" href="{{ path(url, query.all|merge({page: lastPage, channelName: app.request.attributes.get('channelName')})) }}">Last page</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </td>
+                    <td class="text-center">
+                        {% if sorter|keys|length %}
+                            <input type="hidden" name="sorter[{{ sorter|keys[0] }}]"
+                                   value="{{ sorter[sorter|keys[0]] }}"/>
+                        {% endif %}
+                        <select name="itemsPerPage" class="form-select" style="min-width: 80px">
+                            <option value="10"{% if itemsPerPage == 10 %} selected="selected"{% endif %}>10</option>
+                            <option value="25"{% if itemsPerPage == 25 %} selected="selected"{% endif %}>25</option>
+                            <option value="50"{% if itemsPerPage == 50 %} selected="selected"{% endif %}>50</option>
+                            <option value="100"{% if itemsPerPage == 100 %} selected="selected"{% endif %}>100</option>
+                        </select>
+                    </td>
+                </tr>
+            </tfoot>
+            {% endif %}
+        </table>
+    </div>
+</form>
+
+{% if modalTemplates %}
+    <div id="grid-modal">
+        {% for modalTemplate in modalTemplates %}
+            {{ modalTemplate }}
+        {% endfor %}
+    </div>
+{% endif %}

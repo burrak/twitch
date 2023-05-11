@@ -1,0 +1,7 @@
+services:
+  _defaults:
+    public: '%public.services%'
+
+  App\OAuthBundle\Controller\OAuthController:
+    class:   App\OAuthBundle\Controller\OAuthController
+    tags: [ 'controller.service_arguments' ]

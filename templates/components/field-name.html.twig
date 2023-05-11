@@ -1,0 +1,22 @@
+
+{% set directionClass = 'fa-sort' %}
+{% if sorter and field_name == sorter.column %}
+    {% if sorter.direction == 'desc' %}
+        {% set directionClass = 'fa-sort-down' %}
+    {% elseif sorter.direction == 'asc' %}
+        {% set directionClass = 'fa-sort-up' %}
+    {% endif %}
+{% endif %}
+
+<div class="px-4">
+{% if field_name in sort_fields %}
+        <div class="th-inner sort-js cursor">
+            <i class="fa fa-fw sort-arrow {{ directionClass }}" data-column="{{ field_name }}"></i>
+            <div>{{ field_name }}</div>
+        </div>
+{% else %}
+    <div class="th-inner d-flex justify-content-center">
+        {{ field_name }}
+    </div>
+{% endif %}
+</div>

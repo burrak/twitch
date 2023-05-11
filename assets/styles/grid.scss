@@ -1,0 +1,72 @@
+.page-item {
+  cursor: pointer;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+.sort-arrow {
+  position: relative;
+  right: 22px;
+  top: 22px
+}
+
+.json {
+  position: relative;
+}
+
+.json button {
+  text-decoration: none !important;
+  color: black !important;
+  font-size: small !important;
+  font-weight: bold !important;
+}
+
+.json button:hover {
+ color: #0d6efd !important;
+}
+
+.json button:focus {
+  box-shadow: none !important;
+}
+
+.grid-table {
+  font-size: small;
+}
+
+.btn-text[aria-expanded="true"] .if-collapsed {
+  display: none;
+}
+
+.btn-text[aria-expanded="true"] .if-not-collapsed {
+  display: inline;
+}
+
+.btn-text[aria-expanded="false"] .if-not-collapsed {
+  display: none;
+}
+
+.btn-text[aria-expanded="false"] .if-collapsed {
+  display: inline;
+}
+
+.card {
+  border: none !important;
+}
+
+.card pre {
+  margin-bottom: 0 !important;
+}
+
+.if-not-collapsed {
+  position: absolute;
+  right: 5%;
+  top: 5%;
+  z-index: 1;
+}
+
+.btn-title-action {
+  min-width: 150px;
+  margin-right: 5px;
+}

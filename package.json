@@ -1,0 +1,45 @@
+{
+  "private": true,
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15",
+    "@popperjs/core": "^2.9",
+    "@symfony/stimulus-bridge": "^2.0.0",
+    "@symfony/webpack-encore": "^1.1",
+    "bootstrap": "^5.0",
+    "bootstrap-icons": "^1.5",
+    "core-js": "^3.11",
+    "flatpickr": "^4.6",
+    "json-formatter-js": "^2.3",
+    "sass": "~1.32.12",
+    "sass-loader": "^12.0",
+    "webpack-notifier": "^1.13"
+  },
+  "devDependencies": {
+    "@types/bootstrap": "^5.1",
+    "eslint": "^7.28",
+    "eslint-config-standard": "^16.0",
+    "eslint-plugin-import": "^2.23",
+    "eslint-plugin-node": "^11.1",
+    "eslint-plugin-promise": "^5.1",
+    "ts-loader": "^9.0",
+    "typescript": "^4.3"
+  },
+  "scripts": {
+    "lint": "eslint assets --ext .js"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "browser": true
+    },
+    "extends": [
+      "standard",
+      "eslint:recommended"
+    ],
+    "rules": {
+      "camelcase": "off",
+      "no-invalid-this": "error",
+      "prefer-template": "error"
+    }
+  }
+}

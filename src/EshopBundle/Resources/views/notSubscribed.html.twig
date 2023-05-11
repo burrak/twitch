@@ -1,0 +1,6 @@
+{% extends 'layout/default.twig' %}
+{% block title %}<title>{% trans %}not_subscribed{% endtrans %}</title>{% endblock %}
+{% block content %}
+    <h2>{% trans %}not_subscribed{% endtrans %}</h2>
+    <h3>{{ 'not_subscribed_to_streamer'|trans({'%streamer%': streamer.userName}) }}&nbsp;<a href="https://twitch.tv/products/{{ streamer.userName }}/ticket">{{ 'here'|trans }}</a></h3>
+{% endblock %}

@@ -1,0 +1,17 @@
+includes:
+	- phpstan-baseline.neon
+parameters:
+    doctrine:
+            objectManagerLoader: tests/doctrine-orm-bootstrap.php
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+    inferPrivatePropertyTypeFromConstructor: true
+    reportUnmatchedIgnoredErrors: false
+    level: 8 # for now, level 2 found 422 errors
+    scanDirectories:
+    	- src/
+    bootstrapFiles:
+    	- vendor/autoload.php
+    paths:
+    	- src
+

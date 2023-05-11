@@ -1,0 +1,7 @@
+parameters:
+  twitchApi.apiUrl: '%env(resolve:TWITCH_API_URL)%'
+  twitchApi.idUrl: '%env(resolve:TWITCH_ID_URL)%'
+  twitchApi.clientId: '%env(resolve:TWITCH_CLIENT_ID)%'
+  twitchApi.clientSecret: '%env(resolve:TWITCH_CLIENT_SECRET)%'
+  twitchApi.redirectUri: '%env(resolve:TWITCH_REDIRECT_URI)%'
+  twitchApi.callbackUrl: '%env(resolve:TWITCH_CALLBACK_URL)%'

@@ -1,0 +1,11 @@
+my_subscriptions: 'My subscriptions'
+subscription_detail_title: 'Detail of subscription to channel'
+subscription_tier: 'Subscription Tier'
+subscription_cumulative_months: 'Total months subscribed'
+subscription_current_streak: 'Current subscription streak'
+subscription_max_streak: 'Best subscription streak'
+subscription_gifted_total: 'Gifted subs'
+dashboard_title: 'Dashboard'
+form.add_to_cart.submit: 'Add to cart'
+not_subscribed_to_streamer: "You don't have subscription at channel %streamer%. You can subscribe"
+here: 'Here'

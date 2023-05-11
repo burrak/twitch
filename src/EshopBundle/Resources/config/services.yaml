@@ -1,0 +1,90 @@
+parameters:
+  images_directory: '%kernel.project_dir%/public/uploads/images'
+
+services:
+  _defaults:
+    public: '%public.services%'
+
+  App\EshopBundle\Controller\EshopAdminController:
+    class: App\EshopBundle\Controller\EshopAdminController
+    tags: [ 'controller.service_arguments' ]
+    arguments:
+      - '@twig'
+      - '@Symfony\Component\Security\Core\Security'
+      - '@App\Repository\ProductRepository'
+      - '@App\Repository\EshopConfigRepository'
+      - '@App\Repository\UserRepository'
+      - '@Symfony\Component\Routing\RouterInterface'
+      - '@App\EshopBundle\Facade\ProductFacade'
+      - '@Symfony\Component\Form\FormFactoryInterface'
+      - '@App\EshopBundle\Model\Grid\ProductGrid'
+
+  App\EshopBundle\Controller\CartController:
+    class: App\EshopBundle\Controller\CartController
+    tags: [ 'controller.service_arguments' ]
+    arguments:
+      - '@Symfony\Component\Security\Core\Security'
+      - '@App\Repository\CartRepository'
+      - '@App\Repository\EshopConfigRepository'
+      - '@App\Repository\UserRepository'
+      - '@Twig_Environment'
+      - '@Symfony\Component\Routing\RouterInterface'
+      - '@App\EshopBundle\Facade\OrderFacade'
+      - '@App\EshopBundle\Facade\CartFacade'
+      - '@Symfony\Component\Form\FormFactoryInterface'
+
+  App\EshopBundle\Controller\OrderController:
+    class: App\EshopBundle\Controller\OrderController
+    tags: [ 'controller.service_arguments' ]
+    arguments:
+      - '@Symfony\Component\Security\Core\Security'
+      - '@Twig_Environment'
+      - '@App\Repository\UserRepository'
+      - '@App\Repository\EshopConfigRepository'
+      - '@App\EshopBundle\Model\Grid\OrderGrid'
+
+  App\EshopBundle\Controller\ProductController:
+    tags: ['controller.service_arguments']
+    arguments:
+      - '@App\Repository\ProductRepository'
+      - '@App\Repository\SubscriberRepository'
+      - '@App\Repository\EshopConfigRepository'
+      - '@Symfony\Component\Security\Core\Security'
+      - '@twig'
+      - '@Symfony\Component\Form\FormFactoryInterface'
+      - '@App\EshopBundle\Facade\CartFacade'
+      - '@Symfony\Component\Routing\RouterInterface'
+      - '@App\EshopBundle\Model\Grid\ProductGrid'
+
+  App\EshopBundle\Service\FileUploader:
+    arguments:
+      $targetDirectory: '%images_directory%'
+      $slugger: '@Symfony\Component\String\Slugger\SluggerInterface'
+
+  App\EshopBundle\Facade\CartFacade:
+    arguments:
+      $productRepository: '@App\Repository\ProductRepository'
+      $entityManager: '@doctrine.orm.entity_manager'
+      $cartRepository: '@App\Repository\CartRepository'
+
+  App\EshopBundle\Facade\OrderFacade:
+    arguments:
+      - '@App\Repository\CartRepository'
+      - '@App\Repository\OrderRepository'
+      - '@App\Repository\EshopConfigRepository'
+      - '@Doctrine\ORM\EntityManagerInterface'
+
+  App\EshopBundle\Facade\ProductFacade:
+    arguments:
+      - '@Doctrine\ORM\EntityManagerInterface'
+      - '@App\Repository\ProductRepository'
+      - '@App\EshopBundle\Service\FileUploader'
+      - '@Symfony\Component\Messenger\MessageBusInterface'
+
+  App\EshopBundle\Model\Grid\OrderGrid:
+    arguments:
+      - '@App\Repository\OrderRepository'
+
+  App\EshopBundle\Model\Grid\ProductGrid:
+    arguments:
+      - '@App\Repository\ProductRepository'

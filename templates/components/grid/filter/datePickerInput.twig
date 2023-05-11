@@ -1,0 +1,45 @@
+{% macro dateFormat(date) %}
+    {{ date|date('Y-m-d H:i:s') }}
+{% endmacro %}
+
+{% set selected = false %}
+{% set dates = [values[0] ?? '', values[1] ?? ''] %}
+{% set data = [
+    [
+        'All',
+        'midnight first day of January 1900',
+        'midnight first day of January 2100 -1 second',
+    ], [
+        'This Month',
+        'midnight first day of this month',
+        'midnight last day of this month +1 day -1 seconds',
+    ], [
+        'Last Month',
+        'midnight first day of previous month',
+        'midnight last day of previous month +1 day -1 seconds',
+    ]
+] %}
+
+<select name="{{ key }}" class="form-select border border-primary border-2 grid-date-picker">
+    <option disabled="disabled"{% if values|length == 1 %} selected="selected"{% endif %}>Select Date</option>
+    {% for item in data %}
+        <option value="{{ _self.dateFormat(item[1])|trim }}"{% if _self.dateFormat(item[1])|trim == dates[0] %}{% set selected = true %} selected="selected"{% endif %}>{{ item[0] }}</option>
+    {% endfor %}
+    <option value="{{ dates[0] }}"{% if values|length == 2 and not selected %} selected="selected"{% endif %}>Custom</option>
+</select>
+
+<select name="{{ key }}" class="d-none grid-date-picker-fake">
+    <option disabled="disabled"{% if values|length == 1 %} selected="selected"{% endif %}>Select Date</option>
+    {% for item in data %}
+        <option value="{{ _self.dateFormat(item[2])|trim }}"{% if _self.dateFormat(item[1])|trim == dates[0] %} selected="selected"{% endif %}></option>
+    {% endfor %}
+    <option value="{{ dates[1] }}"{% if values|length == 2 and not selected %} selected="selected"{% endif %}></option>
+</select>
+
+<div class="{% if values|length != 2 or selected %}d-none {% endif %}mt-2 grid-date-picker-custom">
+
+    <input type="text"
+           readonly="readonly"
+           placeholder="Select Date..."
+           class="flatpickr flatpickr-input form-control border border-2 border-primary">
+</div>

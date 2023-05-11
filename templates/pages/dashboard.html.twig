@@ -1,0 +1,17 @@
+{% extends 'layout/default.twig' %}
+{% block title %}<title>{% trans %}dashboard_title{% endtrans %}</title>{% endblock %}
+{% block content %}
+    <h2>{% trans %}my_subscriptions{% endtrans %}</h2>
+    {% for sub in mySubs %}
+
+        <div class="row">
+            <div class="col-2">
+                <img src="{{ sub.streamer.image }}" width="64" style="border-radius: 50%">
+            </div>
+            <div class="col-10">
+                <a href="{{ path('subscription_detail', {channelName: sub.streamer.userName}) }}">{{ sub.streamer.userName }}</a>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}

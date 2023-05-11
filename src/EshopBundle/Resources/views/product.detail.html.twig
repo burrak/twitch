@@ -1,0 +1,40 @@
+{% extends 'layout/default.twig' %}
+{% block title %}<title>{{ product.title }}</title>{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-6">
+            {% set productImage = product.productImages.first ? product.productImages.first.path : asset('images/dummy-image-square.jpg') %}
+            <img src="{{ productImage }}" alt="{{ product.title }}" style="max-width: 100%">
+        </div>
+        <div class="col-6">
+            <h2>{{ product.title }}</h2>
+            <p>
+                {{ product.description }}
+            </p>
+
+            <div class="row">
+                <div class="col-5">
+                    <h3>
+                        {{ (product.price/100)|number_format(2, ',', ' ') }}&nbsp;{{ eshopConfig.currency.displayName }}
+                    </h3>
+                </div>
+                <div class="col-7">
+                    <div class="row">
+                        <div class="col-6">
+                            {{ form_start(form) }}
+                            {{ form_widget(form.quantity, {'value': quantity}) }}
+                        </div>
+                        <div class="col-6">
+                            {{ form_widget(form.product_id, {'value': product.id }) }}
+                            {{ form_end(form) }}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,109 @@
+{% form_theme form 'components/form-errors.html.twig' %}
+
+{% set class = '' %}
+{% if form.vars.submitted %}
+    {% if field.vars.value is not empty %}
+        {% set class = 'is-valid ' %}
+    {% endif %}
+    {% if field.vars.errors is not empty %}
+        {% set class = 'is-invalid ' %}
+    {% endif %}
+{% endif %}
+
+{% set modalId = "fileModal-" ~ field.vars.id %}
+
+{{ form_label(field, null, {'label_attr': {'class': 'form-label '}}) }}
+<div class="mb-4 input-group">
+    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#{{ modalId }}">Load
+        Photo
+    </button>
+    {{ form_widget(field, {'attr': {'class': class ~ field.vars.attr.class|default('')}}) }}
+    {% if description is defined %}
+        <small class="form-text text-muted">{{ description|raw }}</small>
+    {% endif %}
+    {{ form_errors(field) }}
+    {% if field.vars.value is not empty %}
+        <div class="valid-feedback">
+            Looks good!
+        </div>
+    {% endif %}
+</div>
+
+<!-- Modal -->
+<div class="modal fade modal-file" tabindex="-1" id={{ modalId }} aria-labelledby="fileModalLabel" aria-hidden="true" data-input-id="{{ field.vars.id }}">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fileModalLabel">File Upload</h5>
+                <button type="button" id="closeModal" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            {# todo: uncomment when adding features to modal window#}
+            <div id="fileValidations" class="modal-body align-self-center">
+{#                <div class="row">#}
+{#                    <div class="col-md-8">#}
+{#                        <ul class="nav nav-tabs" id="imagesTab" role="tablist">#}
+{#                            <li class="nav-item" role="presentation">#}
+{#                                <button class="nav-link active" id="icon-tab" data-bs-toggle="tab"#}
+{#                                        data-bs-target="#icon" type="button" role="tab" aria-controls="icon"#}
+{#                                        aria-selected="true">Icon#}
+{#                                </button>#}
+{#                            </li>#}
+{#                            <li class="nav-item" role="presentation">#}
+{#                                <button class="nav-link" id="image-tab" data-bs-toggle="tab" data-bs-target="#image"#}
+{#                                        type="button" role="tab" aria-controls="image" aria-selected="false">Image#}
+{#                                </button>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                        <div class="tab-content" id="myTabContent">#}
+{#                            <div class="tab-pane fade show active" id="icon" role="tabpanel" aria-labelledby="icon-tab">#}
+{#                                <div class="row">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                </div>#}
+
+{#                                <div class="row">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="tab-pane fade" id="image" role="tabpanel" aria-labelledby="image-tab">#}
+{#                                <div class="row">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                </div>#}
+
+{#                                <div class="row">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                    <img class="thumbnail-image-item" src="">#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+                    <div class="col-md-4">
+                        <div class="container-thumbnail-image">
+                            <img class="main-thumbnail-image" src="">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+{#                    <div class="col-md-8">#}
+{#                        <i class="bi bi-arrow-left fa-2x arrow-thumbnail"></i>#}
+{#                        <i class="bi bi-arrow-right fa-2x arrow-thumbnail mx-5"></i>#}
+{#                    </div>#}
+{#                    <div class="col-md-4">#}
+{#                        <div class="container-buttons">#}
+                            <label class="btn btn-slim btn-secondary mx-2">
+                                Load <input id="loadFile" type="file" hidden>
+                            </label>
+                            <button id="useFile" type="button" class="btn btn-slim btn-primary mx-2">Use</button>
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+            </div>
+        </div>
+    </div>
+</div>

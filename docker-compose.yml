@@ -1,0 +1,96 @@
+version: '3.3'
+services:
+  nginx:
+    build:
+      context: 'docker/nginx'
+    image: '372854371796.dkr.ecr.eu-central-1.amazonaws.com/nginx'
+    volumes:
+      - ./:/var/www/html
+      - ./docker/apache-selfsigned.crt:/etc/ssl/certs/apache-selfsigned.crt
+      - ./docker/apache-selfsigned.key:/etc/ssl/private/apache-selfsigned.key
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.template
+      - ./docker/upstream.conf:/etc/nginx/conf.d/upstream.conf
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    ports:
+      - "${DEV_IP}:80:80"
+      - "${DEV_IP}:443:443"
+    env_file:
+      - .env
+    environment:
+      - NGINX_HOST=${NGINX_HOST}
+      - NGINX_PORT=${NGINX_PORT}
+    command: /bin/sh -c "envsubst < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+    networks:
+      - symfony
+
+  php:
+    build:
+      context: 'docker/php'
+    image: '372854371796.dkr.ecr.eu-central-1.amazonaws.com/php'
+    environment:
+      PHP_IDE_CONFIG: serverName=localhost
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/crontab:/etc/periodic:ro
+    networks:
+      - symfony
+
+  consumer:
+    build:
+      context: 'docker/php'
+    environment:
+      PHP_IDE_CONFIG: serverName=localhost
+    entrypoint: ./docker/php/consumer.sh
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - symfony
+
+  cron:
+    build:
+      context: 'docker/php'
+    command: 'crond -f -l 8'
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/crontab:/etc/periodic:ro
+    networks:
+      - symfony
+
+  ###> doctrine/doctrine-bundle ###
+  database:
+    image: mariadb:${MARIADB_VERSION:-10.9.3}
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_PASSWORD:-!ChangeMe!}
+    ports:
+      - "${DEV_IP}:3306:3306"
+    volumes:
+      - db-data:/var/lib/mariadb/data:rw
+    networks:
+      - symfony
+      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+      # - ./docker/db/data:/var/lib/postgresql/data:rw
+###< doctrine/doctrine-bundle ###
+
+  mailer:
+    image: schickling/mailcatcher
+    ports:
+      - "${DEV_IP}:1025:1025"
+      - "${DEV_IP}:1080:1080"
+    networks:
+      - symfony
+
+  certbot:
+    image: certbot/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+
+volumes:
+  esdata:
+  certs:
+  db-data:
+
+networks:
+  symfony:

@@ -1,0 +1,14 @@
+.invisible {
+  display: none;
+}
+
+.is-visible {
+  display: block;
+}
+
+.form-label.required:before {
+  color: red;
+  content: "*";
+  position: absolute;
+  margin-left: -15px;
+}

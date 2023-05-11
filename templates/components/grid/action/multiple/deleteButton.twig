@@ -1,0 +1,6 @@
+<a href="{{ path(url, {id: item.id}|merge(app.request.query)) }}"
+   title="{{ name }}"
+   class="btn btn-icon btn-outline-danger"
+   onclick="return confirm('Do you really want to delete this item?')">
+    <i class="bi bi-trash-fill"></i>
+</a>

@@ -1,0 +1,7 @@
+<select name="{{ key }}" multiple="multiple" class="form-select select-table" size="3" >
+    {% for optionKey, optionValue in options %}
+        <option value="{{ optionKey }}" {% if optionKey in values %}selected="selected"{% endif %}>
+            {{ optionValue }}
+        </option>
+    {% endfor %}
+</select>

@@ -1,0 +1,77 @@
+{% extends 'layout/default.twig' %}
+{% block title %}<title>{% trans %}eshop_admin_order{% endtrans %}</title>{% endblock %}
+{% block content %}
+    {% include 'components/grid.twig' with {
+        eshopConfig: eshopConfig,
+        props: {
+            items: items[0],
+            total: items[1],
+            itemsPerPage: itemsPerPage,
+            columns: [
+                {
+                    key: 'order.createdAt',
+                    path: 'createdAt',
+                    name: 'createdAt',
+                    columnWidth: '1',
+                    template: 'components/grid/content/dateTime.twig'
+                },
+                {
+                    key: 'order.firstname',
+                    path: 'firstname',
+                    name: 'firstname',
+                    columnWidth: '1',
+                    hasSorter: 'false',
+                    filter: {
+                        template: 'components/grid/filter/textInput.twig',
+                        operator: 'like',
+                    },
+                },
+                {
+                    key: 'order.surname',
+                    path: 'surname',
+                    name: 'surname',
+                    columnWidth: '1',
+                    hasSorter: 'false',
+                    filter: {
+                        template: 'components/grid/filter/textInput.twig',
+                        operator: 'like',
+                    },
+                },
+                {
+                    key: 'order.status',
+                    path: 'status',
+                    name: 'status',
+                    columnWidth: '1',
+                },
+                {
+                    key: 'order.total',
+                    path: 'total',
+                    name: 'total',
+                    columnWidth: '1',
+                },
+            ],
+            actions: {
+                single: [
+                ],
+                multiple: [
+                ]
+            },
+        }
+    } only %}
+
+    {% for order in orders %}
+        <div class="row">
+            <div class="col">
+                {{ order.createdAt|date('d. m. Y H:i:s', 'Europe/Prague') }}
+            </div>
+            <div class="col">
+                {{ order.firstName }}&nbsp;{{ order.surname }}
+            </div>
+            <div class="col">
+                {{ order.status }}
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

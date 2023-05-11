@@ -1,0 +1,6 @@
+{% extends 'layout/default.twig' %}
+{% block title %}<title>Index</title>{% endblock %}
+{% block content %}
+    <a href="https://id.twitch.tv/oauth2/authorize?client_id=cbtm8qb4v8jlbupum9ct1i0ggq5uie&redirect_uri=https://twitch.blabol.eu/oauth&response_type=code&scope=user%3Aread%3Asubscriptions+user%3Aread%3Aemail&force_verify=true">Twitch login</a>
+    <a href="https://id.twitch.tv/oauth2/authorize?client_id=cbtm8qb4v8jlbupum9ct1i0ggq5uie&redirect_uri=https://twitch.blabol.eu/oauth&response_type=code&scope=user%3Aread%3Asubscriptions+user%3Aread%3Aemail+channel%3Aread%3Asubscriptions&force_verify=true">Streamer login</a>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'layout/default.twig' %}
+{% block title %}<title>{% trans %}subscription_detail_title{% endtrans %}&nbsp;{{ streamer.userName }}</title>{% endblock %}
+{% block content %}
+    <h2>{% trans %}subscription_detail_title{% endtrans %}&nbsp;<img src="{{ streamer.image }}" width="64" style="border-radius: 50%">&nbsp;{{ streamer.userName }}</h2>
+    <div class="row">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-6">
+                {% trans %}subscription_tier{% endtrans %}
+            </div>
+            <div class="col-6">
+                {{ (subscriber.tier ?? 0)/1000 }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                {% trans %}subscription_cumulative_months{% endtrans %}
+            </div>
+            <div class="col-6">
+                {{ subscriber.cumulativeMonths ?? 0 }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                {% trans %}subscription_current_streak{% endtrans %}
+            </div>
+            <div class="col-6">
+                {{ subscriber.currentStreak ?? 0 }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                {% trans %}subscription_max_streak{% endtrans %}
+            </div>
+            <div class="col-6">
+                {{ subscriber.maxStreak ?? 0 }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                {% trans %}subscription_gifted_total{% endtrans %}
+            </div>
+            <div class="col-6">
+                {{ subscriber.giftedTotal ?? 0 }}
+            </div>
+        </div>
+    </div>
+    </div>
+    <h3>{% trans %}channel_products_title{% endtrans %}</h3>
+    <div class="col-12">
+        {% for product in products %}
+        {% if loop.first %}
+        <div class="row"> {# open row #}
+            {% endif %}
+            <div class="col-md-3">
+            <div class="card" style="width: 18rem; margin-bottom: 2rem">
+                {% set productImage = product.productImages.first ? product.productImages.first.thumbnail : asset('images/dummy-image-square.jpg') %}
+                <a href="{{ path('product_detail', {'channelName': app.request.attributes.get('channelName'), 'productId': product.id|base64_encode}) }}"><img class="card-img-top" src="{{ productImage }}" alt="{{ product.title }}" style="height: 286px; width: 286px; object-fit: cover"></a>
+                <div class="card-body">
+                    <h5 class="card-title"><a href="{{ path('product_detail', {'channelName': app.request.attributes.get('channelName'), 'productId': product.id|base64_encode}) }}">{{ product.title }}</a></h5>
+                    <p class="card-text">{{ product.description|length > 50 ? product.description|slice(0, 50) ~ '...' : product.description }}</p>
+                    {% if product.isEligible(subscriber) %}
+                        {% set form = addToCartForm.createView %}
+                        {{ form_start(form, {'id': product.id, 'name': product.id }) }}
+                        {% set value = cart_quantity(user.carts, product) %}
+                        <div class="row">
+                            <div class="col-6">
+                                {{ form_widget(form.quantity, {'id': product.id, 'name': product.id, 'value': value }) }}
+                            </div>
+                            <div class="col-6">
+                                {{ form_widget(form.submit) }}
+                            </div>
+                        </div>
+                        {{ form_widget(form.product_id, {'value': product.id }) }}
+                        {{ form_end(form) }}
+                    {% else %}
+                        <div class="row">
+                            <div class="col-12">
+                                {% trans %}product_not_eligible{% endtrans %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            </div>
+
+        {% if loop.index % 4 == 0 %}
+        </div>
+        <div class="row"> {# after 3 iterates close row and open new #}
+            {% endif %}
+            {% if loop.last %}
+                </div> {# close last row #}
+            {% endif %}
+
+            {# <div class="row">
+                <div class="col-8">
+                    {{ product.title }}
+                </div>
+                <div class="col-4">
+                    {% if product.isEligible(subscriber) %}
+                        {% set form = addToCartForm.createView %}
+                        {{ form_start(form, {'id': product.id, 'name': product.id }) }}
+                        {% set value = cart_quantity(user.carts, product) %}
+                        {{ form_widget(form.quantity, {'id': product.id, 'name': product.id, 'value': value }) }}
+                        {{ form_widget(form.product_id, {'value': product.id }) }}
+                        {{ form_end(form) }}
+                    {% else %}
+                        {% trans %}product_not_eligible{% endtrans %}
+                    {% endif %}
+                </div>
+            </div>#}
+
+        {% endfor %}
+    </div>
+
+
+{% endblock %}

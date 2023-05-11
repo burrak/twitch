@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% set menuEnabled = menuEnabled is defined ? menuEnabled : false %}
+
+{% trans_default_domain 'layout' %}
+
+{# @var string routeName #}
+
+{% block layout %}
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {% if menuEnabled %}
+        {% include 'layout/menu.twig' %}
+    {% endif %}
+
+    <div class="container-xl container-md">
+        {% block content %}{% endblock %}
+    </div>
+
+{% endblock %}
+
+{% block custom_styles %}
+    <style>
+        .v-content {
+            background: #f2f2f2;
+        }
+    </style>
+{% endblock %}

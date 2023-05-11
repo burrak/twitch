@@ -1,0 +1,11 @@
+{% form_theme form 'components/form-errors.html.twig' %}
+
+{% set class = '' %}
+{% if form.vars.submitted %}
+    {% if field.vars.value is not empty %}
+        {% set class = 'is-valid ' %}
+    {% endif %}
+    {% if field.vars.errors is not empty %}
+        {% set class = 'is-invalid ' %}
+    {% endif %}
+{% endif %}

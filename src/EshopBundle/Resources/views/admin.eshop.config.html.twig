@@ -1,0 +1,8 @@
+{% extends 'layout/default.twig' %}
+{% block title %}<title>{% trans %}eshop_admin_config{% endtrans %}</title>{% endblock %}
+{% block content %}
+    <h2>{% trans %}eshop_admin_config{% endtrans %}</h2>
+    {{ form_start(configForm) }}
+    {{ form_widget(configForm) }}
+    {{ form_end(configForm) }}
+{% endblock %}

@@ -1,0 +1,11 @@
+import './styles/tables.scss'
+import './js/datePicker.ts'
+import './js/dateTimePicker.js'
+import './js/grid.ts'
+import './js/copy.ts'
+import './js/jsonView.ts'
+
+import './styles/app.scss'
+import './js/loader'
+import './js/notification-form'
+import './js/template-form'

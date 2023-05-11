@@ -1,0 +1,54 @@
+{% extends 'layout/default.twig' %}
+{% block title %}<title>{% trans %}eshop_admin_title{% endtrans %}</title>{% endblock %}
+{% block content %}
+    <h2>{% trans %}eshop_admin_title{% endtrans %}</h2>
+    {% include 'components/grid.twig' with {
+        eshopConfig: eshopConfig,
+        props: {
+            items: items[0],
+            total: items[1],
+            itemsPerPage: itemsPerPage,
+            eshopConfig: eshopConfig,
+            columns: [
+                {
+                    key: 'product.title',
+                    path: 'title',
+                    name: 'title',
+                    columnWidth: '8',
+                    filter: {
+                        template: 'components/grid/filter/textInput.twig',
+                        operator: 'like',
+                    },
+                },
+                {
+                    key: 'product.price',
+                    path: 'price',
+                    name: 'price',
+                    columnWidth: '3',
+                    template: 'components/grid/content/price.twig'
+                },
+            ],
+            actions: {
+                single: [
+                    {
+                        url: 'eshop_product_add',
+                        variables: {
+                            'channelName': app.request.attributes.get('channelName'),
+                        },
+                        name: 'Create',
+                        template: 'components/grid/action/single/button.twig',
+                    }
+
+                ],
+                multiple: [
+                    {
+                        url: 'eshop_product_edit',
+                        name: 'Update',
+                        template: 'components/grid/action/multiple/updateProduct.twig'
+                    },
+
+                ]
+            },
+        }
+    } only %}
+{% endblock %}

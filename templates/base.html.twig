@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/build/app.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script> -->
+    <!-- Font Awesome -->
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" /> -->
+    <!-- Google Fonts -->
+    <!-- <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" /> -->
+
+    {#% for cssLinkParams in styles %}
+        <link {% for param, value in cssLinkParams %}{{ param }}="{{ value }}" {% endfor %}/>
+    {% endfor %}
+
+    {% for jsScriptParams in scripts %}
+        <script{% for param, value in jsScriptParams %} {{ param }}="{{ value }}"{% endfor %}></script>
+    {% endfor %#}
+
+
+    {% if jsMessages is defined %}
+        <script>
+
+            var trans = (function () {
+                var messages = {{ jsMessages | json_encode | raw }};
+
+                return function (id, params) {
+                    params = typeof params === 'undefined' ? {} : params;
+                    var message = id in messages ? messages[id] : id;
+
+                    for (var param in params) {
+                        message = message.replace(param, params[param]);
+                    }
+
+                    return message;
+                }
+
+            })();
+
+        </script>
+    {% endif %}
+
+    {% block title %}<title>{{page_title|trans({},'layout')}}</title>{% endblock %}
+
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+
+    <!-- Popperjs -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+            crossorigin="anonymous"></script>
+    <!-- Tempus Dominus JavaScript -->
+    <script src="https://cdn.jsdelivr.net/gh/Eonasdan/tempus-dominus@master/dist/js/tempus-dominus.js"
+            crossorigin="anonymous"></script>
+
+    <!-- Tempus Dominus Styles -->
+    <link href="https://cdn.jsdelivr.net/gh/Eonasdan/tempus-dominus@master/dist/css/tempus-dominus.css"
+          rel="stylesheet" crossorigin="anonymous">
+
+    <link href="/build/app.css" rel="stylesheet">
+
+
+
+</head>
+<body>
+
+
+{% block layout %}{% endblock %}
+
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    <script src="/build/app.js" defer></script>
+    <script src="/build/files.js" defer></script>
+    <script src="/build/runtime.js" defer></script>
+    <script src="/build/vendors-node_modules_core-js_modules_es_array_from_js-node_modules_core-js_modules_es_array_i-edb03f.js" defer></script>
+    <script src="/build/vendors-node_modules_core-js_modules_es_string_starts-with_js-node_modules_core-js_modules_we-c9c9cc.js" defer></script>
+    <script src="/build/vendors-node_modules_core-js_modules_es_array_concat_js-node_modules_core-js_modules_es_array-21a139.js" defer></script>
+{% endblock %}
+</body>
+</html>

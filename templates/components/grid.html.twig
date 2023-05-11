@@ -1,0 +1,116 @@
+{{ form_start(form, {'attr': {'id': props.form_id, 'data-autocomplete_url': props.autocomplete_url}}) }}
+<div class="container mt-3">
+    {% set paging = props.items.paging %}
+    <div class="row">
+        <table class="table table-bordered grid-table">
+            <thead>
+            <tr>
+                {% set dateFieldExhousted = [] %}
+                {% for view in form.children %}
+                    {% set field_name = view.vars.name %}
+                    {% if field_name in props.omited_fields %}
+                    {% elseif field_name|split('_')[0] not in dateFieldExhousted %}
+                        {% set field_name_operator = null %}
+                        {% if field_name|split('_')[1] is defined %}
+                            {% set field_name_operator = field_name|split('_')[1] %}
+                        {% endif %}
+                        {% set field_name = field_name|split('_')[0] %}
+                        <th scope="col">
+                            {% embed 'components/field-name.html.twig' with {
+                                sorter: props.items.sorter,
+                                sort_fields: props.sort_fields,
+                            } %}
+                            {% endembed %}
+                            {% if field_name in props.search_filter %}
+                                <div class="filter-control">
+                                    {% if field_name in props.autocomplete %}
+                                        {% set autocomplete_id = "autocomplete-" ~ field_name %}
+                                            {{ form_widget(view, {'attr': {'class': 'form-control search-input autocomplete-js' ~ view.vars.attr.class|default(''), 'list': autocomplete_id}}) }}
+                                        <datalist id="{{ autocomplete_id }}">
+                                        </datalist>
+                                    {% else %}
+                                        {{ form_widget(view, {'attr': {'class': 'form-control search-input' ~ view.vars.attr.class|default('')}}) }}
+                                    {% endif %}
+                                </div>
+                            {% elseif field_name in props.date_filter %}
+                                <div class="filter-control">
+                                    {% if field_name_operator == 'gte' %}
+                                        <div>
+                                            {{ form_widget(view, {'attr': {'class': 'form-control date-input-js', 'type': 'text'}}) }}
+                                            <span>to</span>
+                                            {% if form.children[field_name ~ '_lte'] is defined %}
+                                                {% set viewTo = form.children[field_name ~ '_lte'] %}
+                                                {{ form_widget(viewTo, {'attr': {'class': 'form-control date-input-js', 'type': 'text'}}) }}
+                                                {% set dateFieldExhousted = dateFieldExhousted|merge([field_name]) %}
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </th>
+                    {% endif %}
+                {% endfor %}
+                <th scope="col">
+                    <div class="th-inner d-flex justify-content-center">
+                        actions
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            {% embed 'components/grid-body.html.twig' with {
+                notification_items: props.items,
+                form_id: props.form_id,
+            } %}
+            {% endembed %}
+        </table>
+    </div>
+    {% set totalPages = (paging.total / paging.itemsPerPage)|round(0, 'ceil') %}
+    <div class="fixed-table-pagination row">
+        <div class="float-start pagination-detail col">
+            <div class="page-list d-inline">
+                <div class="btn-group dropdown dropup">
+                    {{ form_widget(form.itemsPerPage, {'attr': {'class': 'btn btn-primary btn-lg', 'type': 'button'}}) }}
+                </div>
+                rows per page
+            </div>
+        </div>
+        <div class="pagination col-auto">
+            <ul class="pagination">
+                {% if paging.id != 1 %}
+                    <li class="page-item page-pre">
+                        <a class="page-link page-link-js" aria-label="previous page"
+                           data-page="{{ 1 }}">‹‹</a>
+                    </li>
+                    <li class="page-item page-pre">
+                        <a class="page-link page-link-js" aria-label="previous page"
+                           data-page="{{ paging.id - 1 }}">‹</a>
+                    </li>
+                {% endif %}
+                {% if totalPages == 0 %}
+                    <li class="page-item active">
+                        <a class="page-link page-link-js" aria-label="to page {{ paging.id }}"
+                           data-page="{{ paging.id }}">{{ paging.id }}</a>
+                    </li>
+                {% else %}
+                    {% for i in max(1, paging.id - props.pages_count_on_edges)..min(totalPages, paging.id + props.pages_count_on_edges) %}
+                        <li class="page-item{% if i == paging.id %} active {% endif %}">
+                            <a class="page-link page-link-js" aria-label="to page {{ i }}"
+                               data-page="{{ i }}">{{ i }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if totalPages != paging.id %}
+                        <li class="page-item page-next">
+                            <a class="page-link page-link-js" aria-label="next page"
+                               data-page="{{ paging.id + 1 }}">›</a>
+                        </li>
+                        <li class="page-item page-next">
+                            <a class="page-link page-link-js" aria-label="next page"
+                               data-page="{{ totalPages }}">››</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{{ form_end(form) }}

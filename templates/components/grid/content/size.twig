@@ -1,0 +1,9 @@
+{% if content > 1024 * 1024 * 1024 %}
+    {{ (content / 1024 / 1024 / 1024)|round(2) }} GB
+{% elseif content > 1024 * 1024 %}
+    {{ (content / 1024 / 1024)|round(2) }} MB
+{% elseif content > 1024 %}
+    {{ (content / 1024)|round(2) }} kB
+{% else %}
+    {{ content|round(2) }} B
+{% endif %}

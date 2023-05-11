@@ -1,0 +1,41 @@
+services:
+  _defaults:
+    public: '%public.services%'
+    autowire: true
+
+  propertyinfoextractor:
+    class: Symfony\Component\PropertyInfo\PropertyInfoExtractor
+    arguments:
+      - ['@property_info.php_doc_extractor']
+      - ['@property_info.php_doc_extractor', '@property_info.reflection_extractor']
+
+  serializer.normalizer.object.camel_case:
+    class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
+    arguments:
+      - null
+      - '@serializer.name_converter.camel_case_to_snake_case'
+      - null
+      - '@propertyinfoextractor'
+
+
+        # $extractor = new PropertyInfoExtractor([], [new PhpDocExtractor(), new ReflectionExtractor()]);
+
+  serializer.jsonserializer:
+    class: 'Symfony\Component\Serializer\Serializer'
+    arguments:
+      - ['@serializer.denormalizer.array' ,'@serializer.normalizer.object.camel_case']
+      - ['@serializer.encoder.json']
+
+  App\TwitchApiBundle\Service\ApiService:
+    class: App\TwitchApiBundle\Service\ApiService
+    autowire: true
+    autoconfigure: true
+    arguments:
+      $clientId: '%twitchApi.clientId%'
+      $clientSecret: '%twitchApi.clientSecret%'
+      $redirectUri: '%twitchApi.redirectUri%'
+      $callbackUrl: '%twitchApi.callbackUrl%'
+      $twitchApiUrl: '%twitchApi.apiUrl%'
+      $twitchIdUrl: '%twitchApi.idUrl%'
+      $client: '@http_client'
+      $serializer: '@serializer.jsonserializer'

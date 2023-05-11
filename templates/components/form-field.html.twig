@@ -1,0 +1,45 @@
+{% form_theme form 'components/form-errors.html.twig' %}
+
+{% set class = '' %}
+{% if form.vars.submitted %}
+    {% if field.vars.value is not empty %}
+        {% set class = 'is-valid ' %}
+    {% endif %}
+    {% if field.vars.errors is not empty %}
+        {% set class = 'is-invalid ' %}
+    {% endif %}
+{% endif %}
+
+{% set addClass = '' %}
+{% if field.vars.name == 'clientId' %}
+    {% set addClass = 'clientIdTextArea' %}
+{% elseif field.vars.name == 'clientIdFile' %}
+    {% set addClass = 'clientIdFileArea' %}
+{% endif %}
+
+<div class="mb-4 {{ addClass }}">
+    {% if field.vars.name == 'useFile' %}
+    <div class="form-check form-switch">
+        {% endif %}
+
+        {{ form_label(field, null, {'label_attr': {'class': 'form-label '}}) }}
+        {% if field.vars.name in disabled_fields %}
+            {{ form_widget(field, {'attr': {'class': class ~ field.vars.attr.class|default(''), 'readonly': 'readonly'}}) }}
+        {% else %}
+            {{ form_widget(field, {'attr': {'class': class ~ field.vars.attr.class|default('')}}) }}
+        {% endif %}
+        {% if description is defined %}
+            <small class="form-text text-muted">{{ description|raw }}</small>
+        {% endif %}
+        {{ form_errors(field) }}
+        {% if field.vars.value is not empty %}
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+        {% endif %}
+        {% if field.vars.name == 'useFile' %}
+    </div>
+    {% endif %}
+</div>
+
+

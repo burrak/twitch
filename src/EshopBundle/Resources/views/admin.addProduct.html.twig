@@ -1,0 +1,92 @@
+{% extends 'layout/default.twig' %}
+{% form_theme addForm 'bootstrap_5_layout.html.twig' %}
+{% block title %}<title>{% trans %}eshop_admin_title{% endtrans %}</title>{% endblock %}
+{% block content %}
+    {{ form_start(addForm) }}
+
+    {{ form_row(addForm.title) }}
+    {{ form_row(addForm.price) }}
+    {{ form_row(addForm.vat) }}
+    {{ form_row(addForm.price_vat) }}
+    {{ form_row(addForm.description) }}
+    {{ form_row(addForm.subscriber) }}
+    {{ form_row(addForm.cumulative_months) }}
+    {{ form_row(addForm.current_streak) }}
+    {{ form_row(addForm.max_streak) }}
+    {{ form_row(addForm.gifted_total) }}
+    {{ form_row(addForm.tier) }}
+    {{ form_row(addForm.order_limit) }}
+    {{ form_row(addForm.total_limit) }}
+    <div class="input-group log-event" id="linkedPickers1" data-td-target-input="nearest" data-td-target-toggle="nearest">
+        {{ form_row(addForm.date_from) }}
+        <span class="input-group-text" data-td-target="#linkedPickers1" data-td-toggle="datetimepicker">
+              <span class="fa-solid fa-calendar"></span>
+        </span>
+    </div>
+    <div class="input-group log-event" id="linkedPickers2" data-td-target-input="nearest" data-td-target-toggle="nearest">
+        {{ form_row(addForm.date_to) }}
+        <span class="input-group-text" data-td-target="#linkedPickers2" data-td-toggle="datetimepicker">
+              <span class="fa-solid fa-calendar"></span>
+        </span>
+    </div>
+    {{ form_row(addForm.active) }}
+    {% if product is defined %}
+        {% for image in product.productImages %}
+            <div class="mb-3">
+                <img src="{{ image.path }}" style="max-width: 400px;">
+            </div>
+        {% endfor %}
+    {% endif %}
+    {{ form_row(addForm.images) }}
+    {{ form_row(addForm.submit) }}
+
+    {{ form_end(addForm) }}
+    <script>
+        const priceInput = document.getElementById('add_product_form_price');
+        priceInput.addEventListener('change', (event) => {
+            console.log(event.target.value);
+            const result = event.target.value * (1 + (document.getElementById('add_product_form_vat').value / 100));
+            document.getElementById('add_product_form_price_vat').value = Math.round((result + Number.EPSILON) * 100) / 100;
+        });
+
+        const priceVatInput = document.getElementById('add_product_form_price_vat');
+        priceVatInput.addEventListener('change', (event) => {
+            console.log(event.target.value);
+            const result = event.target.value / (1 + (document.getElementById('add_product_form_vat').value / 100));
+            document.getElementById('add_product_form_price').value = Math.round((result + Number.EPSILON) * 100) / 100;
+        });
+
+        const vatInput = document.getElementById('add_product_form_vat');
+        vatInput.addEventListener('change', (event) => {
+            console.log(event.target.value);
+            const result = document.getElementById('add_product_form_price').value * (1 + (event.target.value / 100));
+            document.getElementById('add_product_form_price_vat').value = Math.round((result + Number.EPSILON) * 100) / 100;
+        });
+
+        /*import { TempusDominus, Namespace } from '@eonasdan/tempus-dominus';*/
+
+        const linkedPicker1Element = document.getElementById('linkedPickers1');
+        const linked1 = new tempusDominus.TempusDominus(linkedPicker1Element);
+        const linked2 = new tempusDominus.TempusDominus(document.getElementById('linkedPickers2'), {
+            useCurrent: false,
+        });
+
+        //using event listeners
+        linkedPicker1Element.addEventListener(tempusDominus.Namespace.events.change, (e) => {
+            linked2.updateOptions({
+                restrictions: {
+                    minDate: e.detail.date,
+                },
+            });
+        });
+
+        //using subscribe method
+        const subscription = linked2.subscribe(tempusDominus.Namespace.events.change, (e) => {
+            linked1.updateOptions({
+                restrictions: {
+                    maxDate: e.date,
+                },
+            });
+        });
+    </script>
+{% endblock %}

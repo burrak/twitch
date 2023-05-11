@@ -1,0 +1,142 @@
+@import "functions";
+@import "mixins";
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #EAEAEA;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: lightgray;
+  border-radius: 15px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #0781FE;
+}
+
+.scrollme {
+  overflow-y: auto;
+  max-height: 341px;
+}
+
+.table-striped-column {
+  > tbody {
+    > tr {
+      > td {
+        &:nth-of-type(odd) {
+          --bs-table-accent-bg: var(--bs-table-striped-bg);
+          color: var(--bs-table-striped-color);
+          @include themify($themes) {
+            background-color: themed('data-table-backgroundcolor');
+            color: themed('striped-text-color');
+          }
+        }
+      }
+    }
+  }
+}
+
+.table-background-data {
+  > tbody {
+    > tr {
+      > td {
+        &:not(:first-child) {
+          --bs-table-accent-bg: var(--bs-table-striped-bg);
+          @include themify($themes) {
+            background-color: themed('data-table-backgroundcolor');
+          }
+        }
+      }
+    }
+  }
+}
+
+.sidebar__link {
+  @include themify($themes) {
+    color: themed('menu-text-color');
+  }
+}
+
+.sidebar__heading {
+  @include themify($themes) {
+    color: themed('menu-text-heading');
+  }
+}
+
+.bg-light {
+  @include themify($themes) {
+    background-color: themed('bg-dark');
+  }
+}
+
+.nav {
+  @include themify($themes) {
+    color: themed('text-light');
+  }
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+  /* Safari */
+  -webkit-transform: rotate(180deg);
+  /* Firefox */
+  -moz-transform: rotate(180deg);
+  /* IE */
+  -ms-transform: rotate(180deg);
+  /* Opera */
+  -o-transform: rotate(180deg);
+}
+
+.btn-slim {
+  min-height: auto !important;
+  max-width: fit-content;
+  padding: 5px 30px;
+  font-size: 0.875rem;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.btn-label {
+  width: 100%;
+  text-align: center;
+  padding: 0 5px 0 5px;
+}
+
+.btn-slim-label {
+  min-height: auto !important;
+  max-width: fit-content;
+  padding: 5px 0 5px 0;
+  font-size: 0.875rem;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.btn-icon {
+  padding: 8px 15px !important;
+  min-height: auto !important;
+}
+
+.checkbox-without-label {
+  float: none !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.center-table-pagination {
+  margin-bottom: 0 !important;
+}
+
+.select-table {
+  min-width: 120px;
+}

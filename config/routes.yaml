@@ -1,0 +1,15 @@
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
+webhook_bundle:
+    resource: '@WebhookBundle/Controller/'
+    type: annotation
+
+oauth_bundle:
+    resource: '@OAuthBundle/Controller/'
+    type: annotation
+
+eshop_bundle:
+    resource: '@EshopBundle/Controller/'
+    type: annotation

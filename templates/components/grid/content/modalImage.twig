@@ -1,0 +1,27 @@
+{% if content %}
+    <div id="{{ modal }}" class="modal">
+        <div class="modal-lg modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title w-100 text-start">
+                        Image Preview <a href="{{ content }}"
+                                         target="_blank"
+                                         class="btn btn-slim btn-primary float-end me-3">Download</a>
+                        <button class="btn btn-slim btn-primary float-end me-4 copy-url-button">
+                            <input type="text" value="{{ content }}" class="d-none copy-url-input" />
+                            Copy URL
+                        </button>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img data-src="{{ content }}" alt="Image Preview" class="w-100 d-none grid-modal-image"/>
+                    <div class="d-none text-center grid-modal-image-not-image">
+                        Image preview is available for image types (PNG, JPG, GIF, etc.).<br/>
+                        Please use download button instead.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

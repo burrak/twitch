@@ -1,0 +1,64 @@
+{% extends 'layout/default.twig' %}
+{% block title %}<title>{% trans %}eshop_cart{% endtrans %}</title>{% endblock %}
+{% block content %}
+    <h2>{% trans %}eshop_cart{% endtrans %}</h2>
+    {% set priceTotal = 0 %}
+    {% for cartItem in cart %}
+        {% set priceTotal = priceTotal + (cartItem.quantity * cartItem.product.price) %}
+        <div class="row">
+            <div class="col-3 m-auto">
+                {{ cartItem.product.title }}
+            </div>
+            <div class="col-3 m-auto">
+                {{ (cartItem.product.price/100)|number_format(2, ',', ' ') }}&nbsp;{{ eshopConfig.currency.displayName }}
+            </div>
+            <div class="col-4 m-auto">
+                {% set form = addToCartForm.createView %}
+                {{ form_start(form, {'id': cartItem.product.id, 'name': cartItem.product.id }) }}
+                <div class="row">
+                    <div class="col-5">
+                        {{ form_widget(form.quantity, {'id': cartItem.product.id, 'name': cartItem.product.id, 'value': cartItem.quantity }) }}
+                    </div>
+                    <div class="col-7">
+                        {{ form_widget(form.submit, {'label': 'cart_quantity_modify'}) }}
+                    </div>
+                </div>
+                {{ form_widget(form.product_id, {'value': cartItem.product.id }) }}
+                {{ form_end(form) }}
+            </div>
+            <div class="col-2 m-auto">
+                {{ ((cartItem.quantity * cartItem.product.price)/100)|number_format(2, ',', ' ') }}&nbsp;{{ eshopConfig.currency.displayName }}
+            </div>
+        </div>
+    {% endfor %}
+    {% if eshopConfig is not null %}
+        {% set priceTotal = priceTotal + eshopConfig.deliveryPrice %}
+        <div class="row">
+            <div class="col-3 m-auto">
+                {{ 'delivery'|trans }}
+            </div>
+            <div class="col-3 m-auto">
+            </div>
+            <div class="col-4 m-auto">
+            </div>
+            <div class="col-2 m-auto">
+                {{ (eshopConfig.deliveryPrice/100)|number_format(2, ',', ' ') }}&nbsp;{{ eshopConfig.currency.displayName }}
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-3 m-auto">
+                {{ 'price_total'|trans }}
+            </div>
+            <div class="col-3 m-auto">
+            </div>
+            <div class="col-4 m-auto">
+            </div>
+            <div class="col-2 m-auto">
+                {{ (priceTotal/100)|number_format(2, ',', ' ') }}&nbsp;{{ eshopConfig.currency.displayName }}
+            </div>
+        </div>
+    {% endif %}
+    <a href="{{ path('cart_address', {'channelName': app.request.attributes.get('channelName')}) }}">Proceed</a>
+
+{% endblock %}

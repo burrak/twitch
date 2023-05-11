@@ -1,0 +1,5 @@
+FROM nginx:1.23-alpine
+USER root
+
+EXPOSE 80
+EXPOSE 443

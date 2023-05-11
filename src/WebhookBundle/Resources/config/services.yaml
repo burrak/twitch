@@ -1,0 +1,19 @@
+services:
+  _defaults:
+    public: '%public.services%'
+
+  App\WebhookBundle\Controller\WebhookController:
+    class: App\WebhookBundle\Controller\WebhookController
+    tags: [ 'controller.service_arguments' ]
+    arguments:
+      - '@logger'
+      - '@App\WebhookBundle\Facade\EventFacade'
+
+  App\WebhookBundle\Facade\EventFacade:
+    class: App\WebhookBundle\Facade\EventFacade
+    arguments:
+      - '@serializer.jsonserializer'
+      - '@App\Repository\UserRepository'
+      - '@App\Repository\WebhookEventRepository'
+      - '@App\Repository\SubscriberRepository'
+      - '@doctrine.orm.entity_manager'
